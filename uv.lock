@@ -212,24 +212,30 @@ name = "api"
 version = "0.1.0"
 source = { editable = "apps/api" }
 dependencies = [
+    { name = "anthropic" },
     { name = "fastapi" },
     { name = "google-genai" },
     { name = "groq" },
     { name = "openai" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
+    { name = "qdrant-client" },
     { name = "uvicorn" },
+    { name = "voyageai" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "anthropic", specifier = ">=0.98.0" },
     { name = "fastapi", specifier = ">=0.135.3" },
     { name = "google-genai", specifier = ">=1.72.0" },
     { name = "groq", specifier = ">=1.1.2" },
     { name = "openai", specifier = ">=2.31.0" },
     { name = "pydantic", specifier = ">=2.13.0" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
+    { name = "qdrant-client", specifier = ">=1.17.1" },
     { name = "uvicorn", specifier = ">=0.44.0" },
+    { name = "voyageai", specifier = ">=0.3.7" },
 ]
 
 [[package]]

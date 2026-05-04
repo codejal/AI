@@ -8,4 +8,21 @@ Do the above process for both the data set using 'parent_asin'
         1. User Reviews (ratings, text, helpfulness votes, etc.) -> Electronics.jsonl
         2. Item Metadata (descriptions, price, raw image, etc.); -> meta_Electronics.jsonl
 
-
+Do some preprocessing on amazon dataset and then store it in qdrant database
+Firstly use embedding api form voyage
+Embed the data points that we want
+        in our case we are embedding 'description', 'image', 'rating_number', 'price', 'average_rating', 'parent_asin'
+Use local qdrant to store these
+for that use docker-compose to use qdrant image for creating the database and mount it to a local storage to store the data
+commands: 
+        cd Desktop/AI
+        uv sync
+        docker compose up --build
+use http://localhost:6333/dashboard to see the qdrant UI
+qdrant has collection analogous to a table in DB
+therefore for this exercise we will use items and metadata = 2 collections
+Create a collection to actually store all the vector embeddings
+Create embedding for all the data points (50 in our case), embedding is created based on description
+store the embedding and payload (json in our case with 'description', 'image', 'rating_number', 'price', 'average_rating', 'parent_asin')
+use a query -> embed that -> get k nearest neighbours for that query
+Use the payload that we saved for these nearest embeddings

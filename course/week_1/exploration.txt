@@ -1,0 +1,11 @@
+Start with downloading data form https://amazon-reviews-2023.github.io/main.html and saving it to the data folder
+We will use electronic dataset
+Filter data to have electronics only from 2022 onwards and create jsonl file for it
+From the filtered data, further filter data to have only the rows with rating number >= 100 (atleast 100 ratings)
+Sample 1000 rows from the above data
+
+Do the above process for both the data set using 'parent_asin'
+        1. User Reviews (ratings, text, helpfulness votes, etc.) -> Electronics.jsonl
+        2. Item Metadata (descriptions, price, raw image, etc.); -> meta_Electronics.jsonl
+
+

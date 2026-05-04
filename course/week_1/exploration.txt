@@ -26,3 +26,15 @@ Create embedding for all the data points (50 in our case), embedding is created 
 store the embedding and payload (json in our case with 'description', 'image', 'rating_number', 'price', 'average_rating', 'parent_asin')
 use a query -> embed that -> get k nearest neighbours for that query
 Use the payload that we saved for these nearest embeddings
+
+
+
+We can now create a RAG pipeline ../../notebooks/week_1/03-RAG-pipeline.ipynb
+We take user's query
+Embed the query
+Search top_k in vector database collection that we created
+use the retrieved context to create a context for prompt
+Create the prompt with enhanced retrieved context + query
+Fire the prompt to AI, get the result and chill.....
+
+This is our first RAG

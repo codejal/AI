@@ -42,4 +42,4 @@ This is our first RAG
 Till now we implemented RAG, but its a black box and what actions our mini agent is taking
 This is why we want obervability using Langsmith
 
-We add it to project use the tracable decorater on the functions
+We add it to project use the tracable decorater on the functions in the AI/apps/api/src/api/agents/retrieval_generation.py

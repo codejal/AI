@@ -35,6 +35,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "langsmith" },
     { name = "matplotlib" },
     { name = "qdrant-client" },
 ]
@@ -57,6 +58,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "langsmith", specifier = ">=0.8.0" },
     { name = "matplotlib", specifier = ">=3.10.9" },
     { name = "qdrant-client", specifier = ">=1.17.1" },
 ]
@@ -216,6 +218,7 @@ dependencies = [
     { name = "fastapi" },
     { name = "google-genai" },
     { name = "groq" },
+    { name = "langsmith" },
     { name = "openai" },
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -224,12 +227,18 @@ dependencies = [
     { name = "voyageai" },
 ]
 
+[package.dev-dependencies]
+dev = [
+    { name = "langsmith" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "anthropic", specifier = ">=0.98.0" },
     { name = "fastapi", specifier = ">=0.135.3" },
     { name = "google-genai", specifier = ">=1.72.0" },
     { name = "groq", specifier = ">=1.1.2" },
+    { name = "langsmith", specifier = ">=0.8.0" },
     { name = "openai", specifier = ">=2.31.0" },
     { name = "pydantic", specifier = ">=2.13.0" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
@@ -237,6 +246,9 @@ requires-dist = [
     { name = "uvicorn", specifier = ">=0.44.0" },
     { name = "voyageai", specifier = ">=0.3.7" },
 ]
+
+[package.metadata.requires-dev]
+dev = [{ name = "langsmith", specifier = ">=0.8.0" }]
 
 [[package]]
 name = "appnope"

@@ -117,12 +117,12 @@ def generate_answer(anthropic_client, prompt):
 @traceable(
         name="rag_pipeline"
 )
-def rag_pipeline(question, top_k=10):
+def rag_pipeline(question, qdrant_client, top_k=10):
         load_dotenv()
         VOYAGE_API_KEY = os.environ.get("VOYAGE_API_KEY")
         voyageai_client = voyageai.Client(api_key=VOYAGE_API_KEY)
         anthropic_client = anthropic.Anthropic()
-        qdrant_client = QdrantClient(url='http://qdrant:6333')
+        # qdrant_client = QdrantClient(url='http://qdrant:6333')
         retrieved_context = retrieve_data(voyageai_client, question, qdrant_client, top_k)
         preprocessed_context = process_context(retrieved_context)
         prompt = build_pompt(preprocessed_context, question)

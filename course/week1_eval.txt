@@ -1,0 +1,24 @@
+Till now we have stored the vectors on local qdrant instance: No of records = 50
+Now we want to actually do evaluation
+For which we will 
+1. Retrieve all the data points from the qdrant
+2. We will use the product id and description only from the data points retrieved
+3. Use LLM to generate synthetic data for reference data set, using the points above from our vector database
+4. We are using this without structured output libraries
+5. First define the output schema for how we want LLM to give us the output
+   Using regular JSON schema
+   In this case (04-evaluation-dataset.ipynb) we define output to be array, with each item of array being define as dictionary of points with attributes
+6. Now we will use LLM to use original chunks from qdrant DB and create questions and answers from them. 
+   This will be our reference data set.
+   The LLM will create 3 things: question, answer, id it used to answer the current question
+7. Now when RAG pipeline generates output, we can check if the chunks in RAG and chunks in the reference dataset are same or not to evaluate
+
+
+
+
+Now we will use Ragas to evaluate our RAG, we will use the above created reference dataset (in langsmith) to run evals
+We will also see how to evaluate using Langsmith's method
+1. We will create evaluators
+2. For each example in the langsmith we run the rag_pipeline and for each output from the rag_pipeline we run the evaluaters
+this all is done by single function of langgraph -> evaluate
+

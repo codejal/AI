@@ -1,0 +1,17 @@
+In this week we will cover the following
+- Structured Output
+- Hybrid Search in RAG
+- Reranking
+- Prompt versioning
+
+
+1. Structured Output
+- Take LLM output and make it compatible with downstream input
+- Implementation options for Structured Output
+        - 1: Use LLM call to take this output as input and give use the required structured output
+        - 2: Regular python libraries/software, where we will need to struture output neatly (import instructor)
+- All the structured outputs should be defined as pydantic schema
+- Now the 'instructor' can be used with the created pydantic model
+- 'instructor' injects the pydantic model and description in the prompt and you dont need to explicitly tell it about it
+
+

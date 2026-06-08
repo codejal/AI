@@ -6,6 +6,7 @@ In this week we will cover the following
 
 
 1. Structured Output
+{week_2 01 Notebook}
 - Take LLM output and make it compatible with downstream input
 - Implementation options for Structured Output
         - 1: Use LLM call to take this output as input and give use the required structured output
@@ -14,4 +15,7 @@ In this week we will cover the following
 - Now the 'instructor' can be used with the created pydantic model
 - 'instructor' injects the pydantic model and description in the prompt and you dont need to explicitly tell it about it
 
+{week_2 02 Notebook}
+- We now add the instructor to our backend application
+- We return more meta data from our backend to have image and price as well
 

@@ -4,7 +4,19 @@ import voyageai
 from langsmith import traceable, get_current_run_tree
 
 from qdrant_client import QdrantClient
+from qdrant_client.models import Filter, FieldCondition, MatchValue
 import anthropic
+from pydantic import BaseModel, Field
+import instructor
+import numpy as np
+
+class RAGUsedContext(BaseModel):
+        id: str = Field(description="The ID of the item used to answer the question")
+        description: str = Field(description="Short description of the item used to answe the question")
+
+class RAGGenerationResponse(BaseModel):
+        answer: str = Field(description="The answer to the question")
+        references: list[RAGUsedContext] = Field(description="List of items used to answer the question")
 
 
 @traceable(
@@ -74,18 +86,24 @@ def process_context(context):
 )
 def build_pompt(preprocessed_context, question):
         prompt = f"""
-You are a shopping assistant that can answer questions about the products in stock.
-You will be given a question and a list of context
+        You are a shopping assistant that can answer questions about the products in stock.
+        You will be given a question and a list of context
 
-Instrctions:
-- You need to answer the question based on the provided context only
-- Never use word context and refer to it as the available products
+        Instrctions:
+        - You need to answer the question based on the provided context only
+        - Never use word context and refer to it as the available products
+        - As an output you need to provide:
+                * The answer to the question based on the provided context.
+                * The list of the IDs of the chunks that were used to answer the question. Only return the ones that are used in the answer
+                * Short description (1-2 sentences) of the item based on the description provided in the context 
+        - The answer description should have name of the item
+        - The answer to the question should contain detailed information about the product and returned with the detailed specification in bullet points
 
-Context:
-{preprocessed_context}
+        Context:
+        {preprocessed_context}
 
-Question:
-{question}
+        Question:
+        {question}
         """
         return prompt
 
@@ -95,7 +113,8 @@ Question:
         metadata={"ls_provider": "anthropic", "ls_model_name": "claude-haiku-4-5"},
 )
 def generate_answer(anthropic_client, prompt):
-        message = anthropic_client.messages.create(
+        instructor_client = instructor.from_anthropic(anthropic.Anthropic())
+        message, raw_response = instructor_client.messages.create_with_completion(
                 max_tokens=2000,
                 messages=[
                         {
@@ -104,20 +123,22 @@ def generate_answer(anthropic_client, prompt):
                         }
                 ],
                 model="claude-haiku-4-5",
+                temperature=0,
+                response_model=RAGGenerationResponse,
         )
 
         current_run = get_current_run_tree()
         if current_run:
                 current_run.metadata["usage_metadata"] = {
-                        "input_tokens": message.__dict__['usage'].__dict__['input_tokens'],
-                        "output_tokens": message.__dict__['usage'].__dict__['output_tokens'],
+                        "input_tokens": raw_response.__dict__['usage'].__dict__['input_tokens'],
+                        "output_tokens": raw_response.__dict__['usage'].__dict__['output_tokens'],
                 }
-        return message.content[0].text
+        return message
 
 @traceable(
         name="rag_pipeline"
 )
-def rag_pipeline(question, qdrant_client, top_k=10):
+def rag_pipeline(question, qdrant_client, top_k=5):
         load_dotenv()
         VOYAGE_API_KEY = os.environ.get("VOYAGE_API_KEY")
         voyageai_client = voyageai.Client(api_key=VOYAGE_API_KEY)
@@ -130,7 +151,8 @@ def rag_pipeline(question, qdrant_client, top_k=10):
 
         # for evaluation we should return the following
         final_result = {
-                "answer": answer,
+                "answer": answer.answer,
+                "references": answer.references,
                 "question": question,
                 "retrieved_context_ids": retrieved_context["retrieved_context_ids"],
                 "retrieved_context": retrieved_context["retrieved_context"],
@@ -138,3 +160,51 @@ def rag_pipeline(question, qdrant_client, top_k=10):
         }
 
         return final_result
+
+
+def rag_pipeline_wrapper(question, top_k=5):
+        qdrant_client = QdrantClient(url='http://qdrant:6333')
+        result = rag_pipeline(question, qdrant_client, top_k)
+        
+        used_context = []
+        dummy_vector = np.zeros(1024).tolist()
+
+        for item in result.get('references', []):
+                # use the id to get the complete payload from qdrant 
+                """ example payload
+                {
+                        "description":"USB C Hub, MCY USB C to HDMI Multiptort Adapter, 1…"
+                        "image":"https://m.media-amazon.com/images/I/41KhTIzecrS._A…"
+                        "rating_number":358
+                        "price": NULL
+                        "average_rating":4.6
+                        "parent_asin":"B0BTYK7SB3"
+                }
+                """
+                payload = qdrant_client.query_points(
+                        collection_name="Amazon-items-collection-00",
+                        query=dummy_vector,
+                        limit=1,
+                        with_payload=True,
+                        query_filter=Filter(
+                                must=[
+                                        FieldCondition(
+                                                key="parent_asin",
+                                                match=MatchValue(value=item.id)
+                                        )
+                                ]
+                        )
+                ).points[0].payload
+                image_url = payload.get("image")
+                price = payload.get("price")
+                if image_url:
+                        used_context.append({
+                                "image_url": image_url,
+                                "price": price,
+                                "description": item.description #from LLM
+                        })
+                
+        return {
+                "answer": result["answer"],
+                "used_context": used_context,
+        }

@@ -28,7 +28,10 @@ In this week we will cover the following
   |- 2. A sparse vector for exact embedding using bm25
 - While querying the qdrant, we will now use a fusion query which merges result from context retrieval and plain text search retrieval
 
-
+{week_2 04 Notebook}
+- Now we will use Reranking using cohere
+- We select a reranking model and make a call to cohere api, give query and the retrieved context as input
+- The api will then rerank these and give us the more better order
 
 
 

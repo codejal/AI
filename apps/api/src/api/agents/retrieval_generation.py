@@ -4,7 +4,7 @@ import voyageai
 from langsmith import traceable, get_current_run_tree
 
 from qdrant_client import QdrantClient
-from qdrant_client.models import Filter, FieldCondition, MatchValue
+from qdrant_client.models import Document, Filter, FieldCondition, FusionQuery, MatchValue, Prefetch
 import anthropic
 from pydantic import BaseModel, Field
 import instructor
@@ -47,8 +47,23 @@ def get_embedding(voyageai_client, text, model = 'voyage-3'):
 def retrieve_data(voyageai_client, query, qdrant_client, k=5):
         query_embedding = get_embedding(voyageai_client, query)
         results = qdrant_client.query_points(
-                collection_name="Amazon-items-collection-00",
-                query=query_embedding,
+                collection_name="Amazon-items-collection-01-hybrid-search",
+                prefetch=[
+                        Prefetch(
+                                query=query_embedding,
+                                using='voyage-3',
+                                limit=10,
+                        ),
+                        Prefetch(
+                                query=Document(
+                                        text=query,
+                                        model="qdrant/bm25"
+                                ),
+                                using='bm25',
+                                limit=10,
+                        ),
+                ],
+                query=FusionQuery(fusion='rrf'), #reciprocal rank fusion
                 limit=k,
         )
 
@@ -182,9 +197,10 @@ def rag_pipeline_wrapper(question, top_k=5):
                 }
                 """
                 payload = qdrant_client.query_points(
-                        collection_name="Amazon-items-collection-00",
+                        collection_name="Amazon-items-collection-01-hybrid-search",
                         query=dummy_vector,
                         limit=1,
+                        using='voyage-3',
                         with_payload=True,
                         query_filter=Filter(
                                 must=[

@@ -17,5 +17,22 @@ In this week we will cover the following
 
 {week_2 02 Notebook}
 - We now add the instructor to our backend application
-- We return more meta data from our backend to have image and price as well
+- We return more meta data from our backend to have image and price as well in the rag_pipeline
+- We integrate this with the frontend to show the image, price and description in the side bar
+
+{week_2 03 Notebook}
+- We will now integrate hybrid Search contextual + exact
+- We need this because contextual works best in the similarity search of meaning and semantics but keyword heavy search then contextual search are not good
+- For this we will store 2 vectors for a point in the qdrant
+  |- 1. A dense vector for contextual embedding using voyage-3
+  |- 2. A sparse vector for exact embedding using bm25
+- While querying the qdrant, we will now use a fusion query which merges result from context retrieval and plain text search retrieval
+
+
+
+
+
+
+
+
 

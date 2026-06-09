@@ -33,6 +33,26 @@ In this week we will cover the following
 - We select a reranking model and make a call to cohere api, give query and the retrieved context as input
 - The api will then rerank these and give us the more better order
 
+{week_2 05 Notebook}
+- now we want to version the prompts so that we can manage better
+- we can do that in 2 ways
+        - Using prompt registry like langsmith
+        - using jinja tempalting language to manage templates
+        - versioning using YAML
+- When iterate quickly along with fellow devs then YAML + git (Recommended)
+- But when working with stake holders, then using prompt registry is better idea
+- Therefore we first use 'jinja' to create templates
+- We store the prompts in YAML so that it can be versioned because we dont want prompts to 
+        present at random places in the code
+        not even a separate python file because that can also create issues and get lost in large code base
+- We create a folder prompts and create a retrieval_generation.yaml
+- populate the prompt in yaml and create the funtion to get the prompt and make a template out of it
+- Use the created template to create the actual prompt by injecting the fields
+
+- We can also create a prompt in langsmith and use the langsmith client to fetch the prompt template
+- use this template in code directly
+- this is useful when working with someone not involved in code
+
 
 
 

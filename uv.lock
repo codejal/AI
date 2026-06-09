@@ -26,6 +26,7 @@ dependencies = [
     { name = "groq" },
     { name = "instructor" },
     { name = "ipykernel" },
+    { name = "jinja2" },
     { name = "langchain-anthropic" },
     { name = "langchain-voyageai" },
     { name = "langgraph" },
@@ -37,6 +38,7 @@ dependencies = [
     { name = "qdrant-client" },
     { name = "ragas" },
     { name = "streamlit" },
+    { name = "template" },
     { name = "voyageai" },
 ]
 
@@ -56,6 +58,7 @@ requires-dist = [
     { name = "groq", specifier = ">=1.1.2" },
     { name = "instructor", specifier = ">=1.15.1" },
     { name = "ipykernel", specifier = ">=7.2.0" },
+    { name = "jinja2", specifier = ">=3.1.6" },
     { name = "langchain-anthropic", specifier = ">=1.4.4" },
     { name = "langchain-voyageai", specifier = ">=0.3.3" },
     { name = "langgraph", specifier = ">=1.2.4" },
@@ -67,6 +70,7 @@ requires-dist = [
     { name = "qdrant-client", specifier = ">=1.17.1" },
     { name = "ragas", specifier = ">=0.4.3" },
     { name = "streamlit", specifier = ">=1.56.0" },
+    { name = "template", specifier = ">=0.7.6" },
     { name = "voyageai", specifier = ">=0.3.7" },
 ]
 
@@ -239,6 +243,7 @@ dependencies = [
     { name = "pydantic" },
     { name = "pydantic-settings" },
     { name = "qdrant-client" },
+    { name = "template" },
     { name = "uvicorn" },
     { name = "voyageai" },
 ]
@@ -261,6 +266,7 @@ requires-dist = [
     { name = "pydantic", specifier = ">=2.13.0" },
     { name = "pydantic-settings", specifier = ">=2.13.1" },
     { name = "qdrant-client", specifier = ">=1.17.1" },
+    { name = "template", specifier = ">=0.7.6" },
     { name = "uvicorn", specifier = ">=0.44.0" },
     { name = "voyageai", specifier = ">=0.3.7" },
 ]
@@ -1242,6 +1248,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/47/66/eea81dfff765ed66c68fd2ed8c96245109e13c896c2a5015c7839c92367e/jiter-0.13.0-cp314-cp314t-win32.whl", hash = "sha256:24dc96eca9f84da4131cdf87a95e6ce36765c3b156fc9ae33280873b1c32d5f6", size = 201196, upload-time = "2026-02-02T12:37:19.101Z" },
     { url = "https://files.pythonhosted.org/packages/ff/32/4ac9c7a76402f8f00d00842a7f6b83b284d0cf7c1e9d4227bc95aa6d17fa/jiter-0.13.0-cp314-cp314t-win_amd64.whl", hash = "sha256:0a8d76c7524087272c8ae913f5d9d608bd839154b62c4322ef65723d2e5bb0b8", size = 204215, upload-time = "2026-02-02T12:37:20.495Z" },
     { url = "https://files.pythonhosted.org/packages/f9/8e/7def204fea9f9be8b3c21a6f2dd6c020cf56c7d5ff753e0e23ed7f9ea57e/jiter-0.13.0-cp314-cp314t-win_arm64.whl", hash = "sha256:2c26cf47e2cad140fa23b6d58d435a7c0161f5c514284802f25e87fddfe11024", size = 187152, upload-time = "2026-02-02T12:37:22.124Z" },
+]
+
+[[package]]
+name = "jmespath"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d3/59/322338183ecda247fb5d1763a6cbe46eff7222eaeebafd9fa65d4bf5cb11/jmespath-1.1.0.tar.gz", hash = "sha256:472c87d80f36026ae83c6ddd0f1d05d4e510134ed462851fd5f754c8c3cbb88d", size = 27377, upload-time = "2026-01-22T16:35:26.279Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/14/2f/967ba146e6d58cf6a652da73885f52fc68001525b4197effc174321d70b4/jmespath-1.1.0-py3-none-any.whl", hash = "sha256:a5663118de4908c91729bea0acadca56526eb2698e83de10cd116ae0f4e97c64", size = 20419, upload-time = "2026-01-22T16:35:24.919Z" },
 ]
 
 [[package]]
@@ -2746,6 +2761,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/03/85/7c669b3a1336d34ef39fa9760fbd343185f3b15db2ad0838fd78423d1c7f/streamlit-1.56.0.tar.gz", hash = "sha256:1176acfa89ae1318b79078e8efe689a9d02e8d58e325c00fc0e55fa2f3fe8d6a", size = 8559239, upload-time = "2026-03-31T22:29:38.59Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e4/91/cb6f13a89e376ef179309d74f37a70ea0041d5e4b5ba5c4836dbf6e020ad/streamlit-1.56.0-py3-none-any.whl", hash = "sha256:8677a335734a30a51bc57ad0ec910e365d95f7c456fc02c60032927cd0729dc5", size = 9052089, upload-time = "2026-03-31T22:29:36.342Z" },
+]
+
+[[package]]
+name = "template"
+version = "0.7.6"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "jinja2" },
+    { name = "jmespath" },
+    { name = "pyyaml" },
+    { name = "toml" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9e/26/0a429d2e5bb2022e55577c2167eb8e3548f072976b7a0c2486ab0fe3f40f/template-0.7.6.tar.gz", hash = "sha256:d7b4c0f699f9e8528e1d16a853a4cee0f945c5a9db75c0a7cddb51df573f05ea", size = 20662, upload-time = "2021-08-15T11:34:09.216Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/44/ad/830433d28f52cf5adf5a93c324d0db1963d875af2250b8b943f5bda91a60/template-0.7.6-py2.py3-none-any.whl", hash = "sha256:9404c263631671d571de564fd44bba327a87c20079754f03981bad40317fd6c5", size = 19331, upload-time = "2021-08-15T11:34:07.708Z" },
 ]
 
 [[package]]

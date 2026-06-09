@@ -10,6 +10,8 @@ from pydantic import BaseModel, Field
 import instructor
 import numpy as np
 
+from api.agents.utils.prompt_management import prompt_template_config
+
 class RAGUsedContext(BaseModel):
         id: str = Field(description="The ID of the item used to answer the question")
         description: str = Field(description="Short description of the item used to answe the question")
@@ -100,26 +102,13 @@ def process_context(context):
         run_type="prompt",
 )
 def build_pompt(preprocessed_context, question):
-        prompt = f"""
-        You are a shopping assistant that can answer questions about the products in stock.
-        You will be given a question and a list of context
-
-        Instrctions:
-        - You need to answer the question based on the provided context only
-        - Never use word context and refer to it as the available products
-        - As an output you need to provide:
-                * The answer to the question based on the provided context.
-                * The list of the IDs of the chunks that were used to answer the question. Only return the ones that are used in the answer
-                * Short description (1-2 sentences) of the item based on the description provided in the context 
-        - The answer description should have name of the item
-        - The answer to the question should contain detailed information about the product and returned with the detailed specification in bullet points
-
-        Context:
-        {preprocessed_context}
-
-        Question:
-        {question}
-        """
+        path_to_file = "api/agents/prompts/retrieval_generation.yaml"
+        prompt_key = "retrieval_generation"
+        template = prompt_template_config(path_to_file, prompt_key)
+        prompt = template.render(
+                preprocessed_context=preprocessed_context,
+                question=question
+        )
         return prompt
 
 @traceable(

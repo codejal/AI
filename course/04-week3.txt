@@ -1,0 +1,31 @@
+- We will learn about LangGraph, its a python liblary for bulding multistep AI agents workflows
+- e.g., lets say our workflow is like this
+        → call the model 
+        → it decides to use a tool 
+        → run the tool 
+        → feed the result back 
+        → repeat until done
+  LangGraph models this as a graph:
+- since it models workflow as graph it has
+|- Nodes -> units of work—usually a function that calls an LLM or runs a tool.
+|- Edges -> define how control flows from one node to the next.
+|- State -> shared data structure passed between nodes, which each node can read from and update.
+
+- First:  We first created single node
+- Second: Then we create node with router and one more node
+- Third:  Then we create a third graph with agent node and tool node (ToolNode is default from LangGraph)
+- Forth:  Then we enhance the third to make a loop from tool to agent node to make a simple ReAct agent
+
+Now we use our learning to enhance RAG pipeline without adding too much agency
+- Query decomposition -> convert question to multiple statements
+- Query rewriting     -> since we stored statements in vectorDB, it makes sense to only search for similar statements to get better result instead of the question
+- Since we have 2 operations decomposition + rewriting and then retrieval we use prompt chaining
+
+- In the graph we create 3 nodes
+|- query expansion: break a multi intent query into statements
+|- retriever: use the rag to get the relevant data per inidividial statement
+|- aggregator: aggregate all the retrieved data
+
+After we get the decomposed query, we can run the retriever in parallel for all the inividial queries
+here we use the conditional edge which broadcasts the request in parallel to from the result of the query expansion to the retriever
+

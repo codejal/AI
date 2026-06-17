@@ -29,3 +29,7 @@ Now we use our learning to enhance RAG pipeline without adding too much agency
 After we get the decomposed query, we can run the retriever in parallel for all the inividial queries
 here we use the conditional edge which broadcasts the request in parallel to from the result of the query expansion to the retriever
 
+- Now we want to implement routing
+- for the incoming query from the user we want to categorize it in relevent vs non relevant
+|- if its relevant go and do the quesy expansion and then parallel execution of retrieval followed by aggregation
+|- if not relevant, END

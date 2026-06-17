@@ -2,9 +2,18 @@ import ast
 import inspect
 import json
 from typing import Dict, Any
-from langchain_core.messages import AIMessage, ToolMessage
+from langchain_core.messages import AIMessage, ToolMessage, convert_to_messages
+from langchain_anthropic.chat_models import _format_messages
 
-def format_ai_message(response) -> AIMessage:
+
+def make_message_anthropic_compatible(messages: list) -> list[dict]:
+        """Convert a list of LangChain messages or dicts to Anthropic API format."""
+        lc_messages = convert_to_messages(messages)
+        _, conversation = _format_messages(lc_messages)
+        return conversation
+
+
+def make_message_langchain_compatible(response) -> AIMessage:
         if response.tool_calls:
                 tool_calls = []
                 for i, tc in enumerate(response.tool_calls):

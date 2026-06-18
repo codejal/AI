@@ -33,3 +33,11 @@ here we use the conditional edge which broadcasts the request in parallel to fro
 - for the incoming query from the user we want to categorize it in relevent vs non relevant
 |- if its relevant go and do the quesy expansion and then parallel execution of retrieval followed by aggregation
 |- if not relevant, END
+
+
+- Since we can create ReAct agent, we will stop manual retrieval and 
+- give our agent the work to 
+        - classify query as relevant vs non relevant
+        - query expansion
+        - retrieval
+        - aggregate the result and generate the answer to be displayed in chat ui

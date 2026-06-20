@@ -25,7 +25,7 @@ def rag(
     payload: RAGRequest
 ) -> RAGResponse:
 
-    answer = rag_agent_wrapper(payload.query)
+    answer = rag_agent_wrapper(payload.query, payload.thread_id)
 
     return RAGResponse(
         request_id=request.state.request_id,

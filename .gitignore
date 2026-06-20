@@ -11,3 +11,4 @@ wheels/
 .env
 /data/*
 /qdrant_storage/*
+/postgres_data/*

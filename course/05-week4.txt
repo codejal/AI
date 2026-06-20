@@ -1,0 +1,10 @@
+- Till week 3 we created a chatbot
+- How this chatbot works is for a session of conversation it only sends the latest request to the backend
+- It does not care what other messages are
+- So we will start with actually introducing postgres to store the conversation histroy
+- so that during a conversation our backend send all the previous messages also to the LLM along with reasoning
+
+- we do this by giving session id to frontend sessions
+- using postgres along with langgraph's session manager to store the history of the conversation and pass the complete conversation to the agent 
+- we create a postgres image and then use it to store the conversation using langgraph itself
+- the postgres then also store the thread_id (aka session_id) and when the query is coming from the same session it pulls the data using the config that we pass which contains thread_id

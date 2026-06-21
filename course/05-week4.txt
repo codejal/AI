@@ -8,3 +8,5 @@
 - using postgres along with langgraph's session manager to store the history of the conversation and pass the complete conversation to the agent 
 - we create a postgres image and then use it to store the conversation using langgraph itself
 - the postgres then also store the thread_id (aka session_id) and when the query is coming from the same session it pulls the data using the config that we pass which contains thread_id
+
+- Now we will give the agent access to one more tool so that the agent can now retrieve and use the user review along with the product description

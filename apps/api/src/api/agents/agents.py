@@ -1,17 +1,18 @@
 import instructor
 import anthropic
 
-from langsmith import traceable
+from langsmith import traceable, get_current_run_tree
 
 from api.agents.utils.utils import make_message_anthropic_compatible, make_message_langchain_compatible
 from api.agents.models import AgentResponse, IntentRouterResponse
 from api.agents.utils.prompt_management import prompt_template_config
 
+MODEL = 'claude-sonnet-4-6'
 
 @traceable(
 name="agent_node",
 run_type="llm",
-metadata={"ls_provider": "anthropic", "ls_model_name": "claude-haiku-4-5-20251001"}
+metadata={"ls_provider": "anthropic", "ls_model_name": MODEL}
 )
 def agent_node(state) -> dict:
         template = prompt_template_config(yaml_file="api/agents/prompts/qa_agent.yaml", prompt_key="qa_agent")
@@ -27,13 +28,24 @@ def agent_node(state) -> dict:
         instructor_client = instructor.from_anthropic(anthropic.Anthropic())
 
         response, raw_response = instructor_client.messages.create_with_completion(
-                model="claude-haiku-4-5-20251001",
+                model=MODEL,
                 response_model=AgentResponse,
                 max_tokens=8096,
                 system=prompt,
                 messages=conversation,
                 temperature=0.5,
         )
+
+        # add usage metadata in langsmith metadata
+        current_run = get_current_run_tree()
+        if current_run:
+                input_tokens = raw_response.__dict__['usage'].__dict__['input_tokens']
+                output_tokens = raw_response.__dict__['usage'].__dict__['output_tokens']
+                current_run.metadata["usage_metadata"] = {
+                        "input_tokens": input_tokens,
+                        "output_tokens": output_tokens,
+                        "total_tokens": input_tokens + output_tokens,
+                }
 
         ai_message = make_message_langchain_compatible(response)
 
@@ -49,11 +61,10 @@ def agent_node(state) -> dict:
 
 
 
-
 @traceable(
         name="intent_router_node",
         run_type="llm",
-        metadata={"ls_provider": "anthropic", "ls_model_name": "claude-haiku-4-5-20251001"},
+        metadata={"ls_provider": "anthropic", "ls_model_name": MODEL},
 )
 def intent_router_node(state):
         template = prompt_template_config(yaml_file="api/agents/prompts/intent_router_agent.yaml", prompt_key="intent_router_agent")
@@ -66,7 +77,7 @@ def intent_router_node(state):
         instructor_client = instructor.from_anthropic(anthropic.Anthropic())
 
         response, raw_response = instructor_client.messages.create_with_completion(
-                model="claude-haiku-4-5-20251001",
+                model=MODEL,
                 response_model=IntentRouterResponse,
                 max_tokens=8096,
                 system=prompt,
@@ -74,7 +85,21 @@ def intent_router_node(state):
                 temperature=0.5,
         )
 
+        # add usage metadata in langsmith metadata
+        current_run = get_current_run_tree()
+        trace_id = None
+        if current_run:
+                input_tokens = raw_response.__dict__['usage'].__dict__['input_tokens']
+                output_tokens = raw_response.__dict__['usage'].__dict__['output_tokens']
+                current_run.metadata["usage_metadata"] = {
+                        "input_tokens": input_tokens,
+                        "output_tokens": output_tokens,
+                        "total_tokens": input_tokens + output_tokens,
+                }
+                trace_id = str(getattr(current_run, 'trace_id', current_run.id))
+
         return {
                 "question_relevant": response.question_relevant,
-                "answer": response.answer
+                "answer": response.answer,
+                "trace_id": trace_id,
         }

@@ -30,3 +30,4 @@ class  State(BaseModel):
         tool_calls: List[ToolCall] = []
         final_answer: bool = False
         references: Annotated[List[RAGUsedContext], add] = []
+        trace_id: str = ""

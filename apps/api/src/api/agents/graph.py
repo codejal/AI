@@ -9,14 +9,14 @@ from langgraph.prebuilt import ToolNode
 from langgraph.checkpoint.postgres import PostgresSaver
 
 from api.agents.utils.utils import get_tool_descriptions
-from api.agents.tools import get_formatted_context
+from api.agents.tools import get_formatted_context, get_formatted_reviews_context
 from api.agents.agents import agent_node, intent_router_node
 from api.agents.models import State
 
 
 def tool_router(state: State) -> str:
         """Decide wheater to continue or end"""
-        if state.final_answer or state.iteration > 1:
+        if state.final_answer or state.iteration > 3:
                 return "end"
         if len(state.tool_calls) > 0:
                 return "tools"
@@ -32,7 +32,7 @@ def intent_router_conditional_edge(state: State):
 
 workflow = StateGraph[State, None, State, State](State)
 
-tools = [get_formatted_context]
+tools = [get_formatted_context, get_formatted_reviews_context]
 tool_node = ToolNode(tools)
 tool_descriptions = get_tool_descriptions(tools)
 
@@ -125,4 +125,5 @@ def rag_agent_wrapper(question, thread_id):
         return {
                 "answer": result.get("answer", ""),
                 "used_context": used_context,
+                "trace_id": result.get("trace_id", "")
         }

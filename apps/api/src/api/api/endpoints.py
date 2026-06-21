@@ -1,7 +1,8 @@
 from api.agents.graph import rag_agent_wrapper
 from fastapi import Request, APIRouter
-from api.api.models import RAGRequest, RAGResponse, RAGUsedContext
+from api.api.models import RAGRequest, RAGResponse, RAGUsedContext, FeedbackRequest, FeedbackResponse
 from qdrant_client import QdrantClient
+from api.api.processors.submit_feedback import submit_feedback
 
 
 from api.core.config import config
@@ -15,8 +16,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-
+api_router = APIRouter()
 rag_router = APIRouter()
+feedback_router = APIRouter()
 
 # decorater to tell post at /chat should invoke this function (def chat)
 @rag_router.post("/")
@@ -31,7 +33,25 @@ def rag(
         request_id=request.state.request_id,
         answer=answer["answer"],
         used_context=[RAGUsedContext(**used_context) for used_context in answer["used_context"]],
+        trace_id=answer["trace_id"]
         )
 
-api_router = APIRouter()
+
+@feedback_router.post("/")
+def send_feedback(
+        request: Request,
+        payload: FeedbackRequest
+) -> FeedbackResponse:
+        submit_feedback(
+                payload.trace_id, 
+                payload.feedback_score, 
+                payload.feedback_text, 
+                payload.feedback_source_type
+        )
+        return FeedbackResponse(
+                request_id=request.state.request_id,
+                status='success'
+        )
+
 api_router.include_router(rag_router, prefix='/rag', tags=['rag'])
+api_router.include_router(feedback_router, prefix='/submit_feedback', tags=['feedback'])
